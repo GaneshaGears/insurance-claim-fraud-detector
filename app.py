@@ -16,29 +16,96 @@ st.title("🚨 Insurance Claim Fraud Detector")
 st.markdown("Enter claim details below to check if it's **fraudulent** or **legitimate**.")
 
 # ----------- Categorical Inputs -------------
-st.subheader("Categorical Claim Details")
-
 user_input = {}
 
 col1, col2 = st.columns(2)
 
+st.subheader("📝 Claim Details (Localized for India)")
+
+# Mappings: India-friendly display → model-compatible values
+state_map = {
+    "Karnataka (KA)": "OH",
+    "Maharashtra (MH)": "IL",
+    "Delhi (DL)": "IN"
+}
+
+city_map = {
+    "Bengaluru": "Columbus",
+    "Mumbai": "Arlington",
+    "New Delhi": "Riverwood"
+}
+
+relationship_map = {
+    "Self": "husband",
+    "Child": "own-child",
+    "Partner (Unmarried)": "unmarried",
+    "Spouse": "wife"
+}
+
+hobby_map = {
+    "Reading": "reading",
+    "Chess": "chess",
+    "CrossFit/Gym": "cross-fit",
+    "Movies": "movies",
+    "Trekking": "kayaking"
+}
+
+# Layout in two columns
+col1, col2 = st.columns(2)
+
 with col1:
-    user_input['policy_state'] = st.selectbox("Policy State", ['OH', 'IL', 'IN'])
-    user_input['insured_sex'] = st.selectbox("Insured Sex", ['MALE', 'FEMALE'])
-    user_input['insured_education_level'] = st.selectbox("Education Level", ['High School', 'College', 'JD', 'MD', 'PhD'])
-    user_input['insured_occupation'] = st.selectbox("Occupation", ['craft-repair', 'machine-op-inspct', 'sales', 'tech-support', 'exec-managerial'])
-    user_input['incident_type'] = st.selectbox("Incident Type", ['Single Vehicle Collision', 'Vehicle Theft', 'Multi-vehicle Collision', 'Parked Car'])
-    user_input['collision_type'] = st.selectbox("Collision Type", ['Rear Collision', 'Side Collision', 'Front Collision'])
-    user_input['incident_severity'] = st.selectbox("Incident Severity", ['Minor Damage', 'Major Damage', 'Total Loss', 'Trivial Damage'])
+    policy_state_display = st.selectbox("Policy Issued State", list(state_map.keys()))
+    user_input['policy_state'] = state_map[policy_state_display]
+
+    user_input['insured_sex'] = st.selectbox("Gender", ['MALE', 'FEMALE'])
+
+    user_input['insured_education_level'] = st.selectbox(
+        "Education Level",
+        ['High School', 'College', 'JD', 'MD', 'PhD']
+    )
+
+    user_input['insured_occupation'] = st.selectbox(
+        "Occupation",
+        ['craft-repair', 'machine-op-inspct', 'sales', 'tech-support', 'exec-managerial']
+    )
+
+    user_input['incident_type'] = st.selectbox(
+        "Type of Incident",
+        ['Single Vehicle Collision', 'Vehicle Theft', 'Multi-vehicle Collision', 'Parked Car']
+    )
+
+    user_input['collision_type'] = st.selectbox(
+        "Collision Type",
+        ['Rear Collision', 'Side Collision', 'Front Collision']
+    )
+
+    user_input['incident_severity'] = st.selectbox(
+        "Damage Severity",
+        ['Minor Damage', 'Major Damage', 'Total Loss', 'Trivial Damage']
+    )
 
 with col2:
-    user_input['insured_relationship'] = st.selectbox("Relationship", ['husband', 'own-child', 'unmarried', 'wife'])
-    user_input['insured_hobbies'] = st.selectbox("Hobby", ['reading', 'chess', 'cross-fit', 'movies', 'kayaking'])
-    user_input['authorities_contacted'] = st.selectbox("Authorities Contacted", ['Police', 'Fire', 'Other', 'None'])
-    user_input['incident_state'] = st.selectbox("Incident State", ['NY', 'VA', 'SC', 'OH'])
-    user_input['incident_city'] = st.selectbox("Incident City", ['Columbus', 'Arlington', 'Riverwood'])
-    user_input['property_damage'] = st.radio("Property Damage", ['YES', 'NO'])
-    user_input['police_report_available'] = st.radio("Police Report Available", ['YES', 'NO'])
+    relationship_display = st.selectbox("Relationship to Policyholder", list(relationship_map.keys()))
+    user_input['insured_relationship'] = relationship_map[relationship_display]
+
+    hobby_display = st.selectbox("Hobby", list(hobby_map.keys()))
+    user_input['insured_hobbies'] = hobby_map[hobby_display]
+
+    user_input['authorities_contacted'] = st.selectbox(
+        "Authorities Contacted",
+        ['Police', 'Fire', 'Other', 'None']
+    )
+
+    incident_city_display = st.selectbox("Incident City", list(city_map.keys()))
+    user_input['incident_city'] = city_map[incident_city_display]
+
+    # For simplicity, incident_state = policy_state
+    user_input['incident_state'] = user_input['policy_state']
+
+    user_input['property_damage'] = st.radio("Was Property Damaged?", ['YES', 'NO'])
+
+    user_input['police_report_available'] = st.radio("Police Report Available?", ['YES', 'NO'])
+
 
 
 # ----------- Numeric Inputs -------------
